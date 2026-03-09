@@ -13,7 +13,7 @@ Requisitos del Sistema:
 
 Instalación:
 
-1. Clonar el repositorio: https://github.com/Juancho22k/GraphColoringApp.git
+1. Clonar el repositorio https://github.com/Juancho22k/Coloreado-de-grafos/tree/main/ColoreadoGrafosJava
 2. Abrir el proyecto en NetBeans 8.2.
 3. Limpiar y Construir (Clean and Build) para verificar dependencias de JavaFX.
 4. Ejecutar el archivo GraphColoringApp.java.
