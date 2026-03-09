@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="graphcoloringapp.controller.MainController"
+            stylesheets="@style.css"
+            prefWidth="1100" prefHeight="720">
+
+    <fx:define>
+        <ToggleGroup fx:id="algoGroup"/>
+        <ToggleGroup fx:id="modeGroup"/>
+    </fx:define>
+
+    <!-- TOP TOOLBAR -->
+    <top>
+        <VBox styleClass="toolbar">
+            <!-- Row 1: title + algo + actions -->
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding:8 14 4 14;">
+                <Label text="Coloreado de Grafos" styleClass="app-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Algoritmo:" styleClass="label-normal"/>
+                <ToggleButton text="BFS" fx:id="btnBFS" toggleGroup="$algoGroup"
+                              styleClass="algo-btn" selected="true"/>
+                <ToggleButton text="DFS" fx:id="btnDFS" toggleGroup="$algoGroup"
+                              styleClass="algo-btn"/>
+                <Separator orientation="VERTICAL"/>
+                <Button text="Colorear" fx:id="btnColor" onAction="#onColorize"
+                        styleClass="primary-btn"/>
+                <Button text="Paso a Paso" fx:id="btnStep" onAction="#onStepButton"
+                        styleClass="secondary-btn"/>
+                <Button text="Limpiar Colores" onAction="#onResetColors"
+                        styleClass="secondary-btn"/>
+                <Separator orientation="VERTICAL"/>
+                <Button text="Ejemplo" onAction="#onLoadExample" styleClass="secondary-btn"/>
+                <Button text="Nuevo Grafo" onAction="#onClearAll" styleClass="danger-btn"/>
+            </HBox>
+
+            <!-- Row 2: mode selector -->
+            <HBox spacing="8" alignment="CENTER_LEFT" style="-fx-padding:4 14 8 14;-fx-background-color:#0d2137;">
+                <Label text="Modo de Interaccion:" styleClass="label-normal"/>
+                <ToggleButton text="+ Agregar Nodo" fx:id="btnModeAdd"
+                              toggleGroup="$modeGroup" onAction="#onModeAdd"
+                              styleClass="mode-btn" selected="true"/>
+                <ToggleButton text="— Agregar Arista" fx:id="btnModeEdge"
+                              toggleGroup="$modeGroup" onAction="#onModeEdge"
+                              styleClass="mode-btn"/>
+                <ToggleButton text="x Eliminar" fx:id="btnModeDelete"
+                              toggleGroup="$modeGroup" onAction="#onModeDelete"
+                              styleClass="mode-btn-danger"/>
+                <ToggleButton text="Mover" fx:id="btnModeMove"
+                              toggleGroup="$modeGroup" onAction="#onModeMove"
+                              styleClass="mode-btn"/>
+                <Separator orientation="VERTICAL"/>
+                <Label fx:id="lblModeDesc" text="Toca el canvas para agregar un nodo"
+                       styleClass="mode-hint"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CENTER -->
+    <center>
+        <HBox>
+            <!-- Canvas -->
+            <StackPane fx:id="canvasPane" HBox.hgrow="ALWAYS" styleClass="canvas-pane"
+                       onMousePressed="#onCanvasPressed"
+                       onMouseDragged="#onCanvasDragged"
+                       onMouseReleased="#onCanvasReleased"
+                       onMouseMoved="#onCanvasMoved">
+                <Label fx:id="lblCanvasHint"
+                       text="Toca el canvas para agregar un nodo"
+                       styleClass="canvas-hint" StackPane.alignment="BOTTOM_CENTER"/>
+            </StackPane>
+
+            <!-- Sidebar -->
+            <VBox fx:id="sidebar" styleClass="sidebar" prefWidth="260" spacing="10">
+                <padding><Insets top="14" right="12" bottom="14" left="12"/></padding>
+
+                <Label text="Agregar Nodo" styleClass="section-title"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="tfNodeId" promptText="ID (opcional)" prefWidth="110"
+                               styleClass="input-field"/>
+                    <Button text="Agregar" onAction="#onAddNode" styleClass="small-btn"/>
+                </HBox>
+
+                <Separator/>
+                <Label text="Agregar Arista" styleClass="section-title"/>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <TextField fx:id="tfEdgeU" promptText="Nodo U" prefWidth="65"
+                               styleClass="input-field"/>
+                    <Label text="-" style="-fx-text-fill:white;"/>
+                    <TextField fx:id="tfEdgeV" promptText="Nodo V" prefWidth="65"
+                               styleClass="input-field"/>
+                </HBox>
+                <Button text="Agregar Arista" onAction="#onAddEdge" maxWidth="Infinity"
+                        styleClass="small-btn"/>
+
+                <Separator/>
+                <Label text="Estadisticas" styleClass="section-title"/>
+                <VBox styleClass="stats-box" spacing="5">
+                    <HBox><Label text="Nodos: " styleClass="stat-label"/>
+                          <Label fx:id="lblNodes" text="0" styleClass="stat-value"/></HBox>
+                    <HBox><Label text="Aristas: " styleClass="stat-label"/>
+                          <Label fx:id="lblEdges" text="0" styleClass="stat-value"/></HBox>
+                    <HBox><Label text="Colores usados: " styleClass="stat-label"/>
+                          <Label fx:id="lblColors" text="-" styleClass="stat-value"/></HBox>
+                    <HBox><Label text="Num. cromatico: " styleClass="stat-label"/>
+                          <Label fx:id="lblChromatic" text="-" styleClass="stat-value"/></HBox>
+                </VBox>
+
+                <Separator/>
+                <Label text="Leyenda" styleClass="section-title"/>
+                <VBox fx:id="legendBox" spacing="4"/>
+
+                <Region VBox.vgrow="ALWAYS"/>
+                <Separator/>
+                <Label text="Log de Pasos" styleClass="section-title"/>
+                <ListView fx:id="logList" prefHeight="190" styleClass="log-list"/>
+                <Label fx:id="lblStatus" text="" styleClass="status-label" wrapText="true"/>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!-- BOTTOM -->
+    <bottom>
+        <HBox styleClass="status-bar" spacing="20" alignment="CENTER_LEFT">
+            <padding><Insets top="5" right="14" bottom="5" left="14"/></padding>
+            <Label fx:id="lblMode" text="Modo activo: Agregar Nodo" styleClass="status-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Proyecto Nro. 3 | Tecnicas de Programacion 3 | 2025-2"
+                   styleClass="status-text" opacity="0.5"/>
+        </HBox>
+    </bottom>
+</BorderPane>
